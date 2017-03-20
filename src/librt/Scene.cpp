@@ -203,7 +203,7 @@ TransformNode *Scene::AddTransform(STMatrix4 matrixin, SceneNode *pNode)
     //create the transform node
     TransformNode *transnode = new TransformNode("transNode", pNode);
     transnode->SetTransform(matrixin);
-    transnode->SetWorldT(IdentityMatrix());
+    transnode->SetWorldT(matrixin);
     transnode->SetWorldIT(IdentityMatrix());
 
     // add
@@ -653,15 +653,39 @@ void Scene::PropogateTransforms(SceneNode *pNode)
     // 
     //----------------------------------------------------------------------------------
 
-    ManipMotionType motion = CurrentManipMotion();
+    //Original code
+    /*ManipMotionType motion = CurrentManipMotion();
     for(int i = 0; i < (int)m_geometryList.size(); ++i) {
-        STMatrix4 *worldmatrix = m_geometryList[i]->GetWorldT();
+        //std::cout << pNode->GetWorldT()->table[0][0] << "teeeeeeeest" << std::endl;
+        STMatrix4 *worldmatrix = pNode->GetWorldT();
         if(IsTranslation(motion))
             worldmatrix->Multiply(m_trans);
         else if(IsRotation(motion))
             worldmatrix->Multiply(m_rotation);
-    }
+
+        //STMatrix4 testMatrix = *worldmatrix;
+        //testMatrix.table[0][0] = 5.5;
+
+        //std::cout << pNode->GetWorldT()->table[0][0] << std::endl;
+    }*/
     //---------------------------------------------------------------------------------
+
+    //ManipMotionType motion = CurrentManipMotion();
+    STMatrix4 *worldmatrix = pNode->GetParent()->GetWorldT();
+    STMatrix4 *currmatrix = pNode->GetWorldT();
+
+
+    currmatrix->Multiply(*worldmatrix);
+    pNode->SetWorldT(*currmatrix);
+
+    STMatrix4 inverseworldmatrix = *worldmatrix;
+    inverseworldmatrix.inv();
+    pNode->SetWorldIT(inverseworldmatrix);
+    
+
+    for (int i = 0; i < pNode->GetChildren().size(); i++){
+        PropogateTransforms(pNode->GetChildren().at(i));
+    }
 
 }
 

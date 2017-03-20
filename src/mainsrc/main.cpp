@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdexcept>
-#include<map>
+#include <map>
 #include <stdlib.h>
 #include <assert.h>
 using namespace std;
@@ -377,15 +377,22 @@ void initializeScene(void)
     // TO DO: Proj3_scenemanip for your first test, change the value
     // of the transform that initializes the transformation node below
     // When you propogate the transform to the children the cube should move in the scene
-    TransformNode *pNode =  pScene->AddTransform(IdentityMatrix(), pScene->GetRoot());
+    STMatrix4 transforming = STMatrix4();
+    transforming.table[3][0] = 3;
+    TransformNode *pNode =  pScene->AddTransform(transforming, pScene->GetRoot());
+    //pNode->SetWorldT(transforming);
 
     // add the triangle meshes
     for(int i = 0; i < (int)gTriangleMeshes.size(); ++i) {
         pScene->AddTriangleMesh(gTriangleMeshes[i], (SceneNode*)pNode);
     }
 
+    //cout << pNode->GetChildren()->size() << endl;
+
     // update the bounding box
     pScene->GetBBox(&gMassCenter, &gBoundingBox);
+
+    pScene->PropogateTransforms(pScene->GetRoot()->GetChildren().at(2));
 
     cout << "Adding nodes done" << endl;
     //----------------------------------------------------------------------------
