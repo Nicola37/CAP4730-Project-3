@@ -370,7 +370,7 @@ void initializeScene(void)
 
     // load a cube model
     std::vector<STTriangleMesh*> gTriangleMeshes;
-    meshOBJ                         = std::string("../../data/meshes/cube.obj");
+    meshOBJ                         = std::string("../../data/meshes/cubeandspheres.obj");
     STTriangleMesh::LoadObj(gTriangleMeshes,meshOBJ);
 
     // add the group transform for these triangle meshes here
@@ -820,27 +820,28 @@ void MouseMotionCallback(int x, int y)
         gPreviousMouseY = y;
         
 
-        
-        if (gMouseButton == GLUT_LEFT_BUTTON)
-        {
-            //-----------------------------------------------------------
-            // TO DO: Proj3_scenemanip
-            // Orbits the camera IF there is no current manipulation mode
-            // There are two functions in Camera::Orbit that must be implemented
-            // to complete fly and orbit mode
-            //-----------------------------------------
-            float axis[4];
-            pScene->GetCamera()->Orbit(axis, x-deltaX, y-deltaY, x, y);
-            //-------------------------------------------
-        }
-        else if (gMouseButton == GLUT_MIDDLE_BUTTON)
-        {
-            pScene->GetCamera()->Strafe(deltaX, deltaY);
-        }
-        else if (gMouseButton == GLUT_RIGHT_BUTTON)
-        {
-           pScene->GetCamera()->Zoom(deltaY);
-        }
+        if (!pScene->HasManipulator()){
+	        if (gMouseButton == GLUT_LEFT_BUTTON)
+	        {
+	            //-----------------------------------------------------------
+	            // TO DO: Proj3_scenemanip
+	            // Orbits the camera IF there is no current manipulation mode
+	            // There are two functions in Camera::Orbit that must be implemented
+	            // to complete fly and orbit mode
+	            //-----------------------------------------
+	            float axis[4];
+	            pScene->GetCamera()->Orbit(axis, x-deltaX, y-deltaY, x, y);
+	            //-------------------------------------------
+	        }
+	        else if (gMouseButton == GLUT_MIDDLE_BUTTON)
+	        {
+	            pScene->GetCamera()->Strafe(deltaX, deltaY);
+	        }
+	        else if (gMouseButton == GLUT_RIGHT_BUTTON)
+	        {
+	           pScene->GetCamera()->Zoom(deltaY);
+	        }
+	    }
 
     // translate
     if (pScene->CurrentManipMotion() == TRANS_X ||
