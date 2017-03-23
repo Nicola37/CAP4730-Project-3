@@ -503,7 +503,7 @@ void Scene::InitManipGeometryMode(void)
 // curMousePos - current mouse position
 // You must complete this implementation
 //------------------------------------------------------------------------------------------
-void Scene::Translate(STVector3 prevMousePos, STVector3 curMousePos)
+void Scene::Translate(float deltaX, float deltaY)
 {
     // TO DO: Proj3_scenemanip
     // Consider M - The scene node's transformation, and T the adjustment determined by the mouse
@@ -529,6 +529,7 @@ void Scene::Translate(STVector3 prevMousePos, STVector3 curMousePos)
     //    the scaled change in x, y, and z
     //-----------------------------------------------------------------------------------------
     
+    STMatrix4 adjustment = STMatrix4();
     
     // deterine the axis of translation
     ManipMotionType motion = CurrentManipMotion();
@@ -536,12 +537,55 @@ void Scene::Translate(STVector3 prevMousePos, STVector3 curMousePos)
     int mode[3] = { 0, 0, 0 };
     if (motion == TRANS_X){
         mode[0] = 1;
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][0] += 0.01*deltaX;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][0] += 0.01*deltaX;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
     if (motion == TRANS_Y){
         mode[1] = 1;
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][1] += -0.01*deltaY;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetTransform(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][1] += -0.01*deltaY;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
     if (motion == TRANS_Z){
         mode[2] = 1;
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][2] += 0.01*deltaY;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.table[3][2] += 0.01*deltaY;
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
 
 
@@ -566,7 +610,7 @@ void Scene::Translate(STVector3 prevMousePos, STVector3 curMousePos)
 // curMousePos - current mouse position
 // You must implement this function.
 //----------------------------------------------------------------------------------------------
-void Scene::Rotate(STVector3 prevMousePos, STVector3 curMousePos)
+void Scene::Rotate(float deltaX, float deltaY)
 {
     //-------------------------------------------------------------------------------------
     // TO DO: Proj3_scenemanip
@@ -590,24 +634,67 @@ void Scene::Rotate(STVector3 prevMousePos, STVector3 curMousePos)
     //    to increment the rotation about the axis in a reasonably smooth way.
     // 7. Make sure the private member m_rotation is updated with T, the change in rotation amount.
     //---------------------------------------------------------------------------------
-
     // determine the axis of rotation
-    ManipMotionType motion = CurrentManipMotion();
 
+    //std::cout << deltaX << "  " << deltaY << std::endl;
+
+    ManipMotionType motion = CurrentManipMotion();
+    STMatrix4 adjustment = STMatrix4();
 
 
     // a roataion about xaxis
     if (motion == ROTATE_X){
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.EncodeR(-1.f*deltaY, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(1,0,0);
+            adjustment.EncodeR(-1.f*deltaY, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
     // a rotation about the Y
     if (motion == ROTATE_Y){
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(0,1,0);
+            adjustment.EncodeR(-1.f*deltaX, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(0,1,0);
+            adjustment.EncodeR(-1.f*deltaX, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
     if (motion == ROTATE_Z){
+        if (CurrentManipMode() == LOCAL){
+            STVector3 axis = STVector3(0,0,1);
+            adjustment.EncodeR(1.f*deltaX, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            nodeTrans->Multiply(adjustment);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
+        }
+        else if (CurrentManipMode() == PARENT){
+            STVector3 axis = STVector3(0,0,1);
+            adjustment.EncodeR(1.f*deltaX, axis);
+            STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
+            adjustment.Multiply(*nodeTrans);
+            m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(adjustment);
+        }
     }
 
     // now you need to propogate this transform in the tree
     PropogateTransforms(m_pTree);
-
 
     //--------------------------------------------------------------------------------------
 }
@@ -671,16 +758,19 @@ void Scene::PropogateTransforms(SceneNode *pNode)
     //---------------------------------------------------------------------------------
 
     //ManipMotionType motion = CurrentManipMotion();
-    STMatrix4 *worldmatrix = pNode->GetParent()->GetWorldT();
-    STMatrix4 *currmatrix = pNode->GetWorldT();
+
+    if (pNode != m_pTree){
+        STMatrix4 *worldmatrix = pNode->GetParent()->GetWorldT();
+        STMatrix4 *currmatrix = pNode->GetWorldT();
 
 
-    currmatrix->Multiply(*worldmatrix);
-    pNode->SetWorldT(*currmatrix);
+        currmatrix->Multiply(*worldmatrix);
+        pNode->SetWorldT(*currmatrix);
 
-    STMatrix4 inverseworldmatrix = *worldmatrix;
-    inverseworldmatrix.inv();
-    pNode->SetWorldIT(inverseworldmatrix);
+        STMatrix4 inverseworldmatrix = *worldmatrix;
+        inverseworldmatrix.inv();
+        pNode->SetWorldIT(inverseworldmatrix);
+    }
     
 
     for (int i = 0; i < pNode->GetChildren().size(); i++){

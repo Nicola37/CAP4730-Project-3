@@ -54,7 +54,7 @@ Camera::~Camera()
 void Camera::SetUpAndRight(void)
 {
 
-    m_Right = STVector3::Cross(m_LookAt - m_Position, STVector3(0, 1, 0));
+    m_Right = STVector3::Cross(m_LookAt - m_Position, m_Up);
     m_Right.Normalize();
     m_Up = STVector3::Cross(m_Right, m_LookAt - m_Position);
     m_Up.Normalize();
@@ -125,12 +125,33 @@ void Camera::Orbit(float axis[4], float p1x, float p1y, float p2x, float p2y)
 //-----------------------------------------------------
 void Camera::RotateOrbit(float delta_x, float delta_y)
 {
+    //rotation amount
+    float rotateX = -delta_x/8;
+    float rotateY = -delta_y/8;
 
+    //move the camera to the lookat position
+     m_Position -= m_LookAt;
 
+     //create a new matrix
+     STMatrix4 rotating;
+     //yaw rotation
+     rotating.EncodeR(rotateX, m_Up);
+     STVector3 holder = rotating * m_Position;
+     m_Position = holder;
+
+     //pitch rotation
+     rotating.EncodeR(rotateY, m_Right);
+     holder = rotating * m_Position;
+     m_Position = holder;
+
+     //move the camera back to its original ditance from lookat position
+     m_Position += m_LookAt;
     // these should be reset to 0
-    m_anglex = 0;
-    m_angley = 0;
+ 
+     m_anglex = 0;
+     m_angley = 0;
 }
+
 
 
 //-----------------------------------------------------------------------
@@ -151,9 +172,32 @@ void Camera::RotateFly(float delta_x, float delta_y)
     //    - m_angley - tracks the latest small increment in the y angle for the mouse moves
     //    - m_LookAt - look at vector
     //-------------------------------------------------------------------------------
-  
+ 
+
+    //rotation amount
+    float rotateX = -delta_x/8;
+    float rotateY = -delta_y/8;
+
+    //move the lookat to the camera position
+     m_LookAt -= m_Position;
+
+     //create a new matrix
+     STMatrix4 rotating;
+     //yaw rotation
+     rotating.EncodeR(rotateX, m_Up);
+     STVector3 holder = rotating * m_LookAt;
+     m_LookAt = holder;
+
+     //pitch rotation
+     rotating.EncodeR(rotateY, m_Right);
+     holder = rotating * m_LookAt;
+     m_LookAt = holder;
+
+     //move the lookat back to its original ditance from camera position
+     m_LookAt += m_Position;
     //-------------------------------------------------------------------------------
 }
+
 
 
 void Camera::Zoom(float delta_y)
@@ -178,7 +222,11 @@ void Camera::Zoom(float delta_y)
 //-------------------------------------------------------------
 void Camera::Strafe(float delta_x, float delta_y)
 {
+    m_Position.x -= delta_x;
+    m_Position.y += delta_y;
 
+    m_LookAt.x -= delta_x;
+    m_LookAt.y += delta_y;
 }
 
 

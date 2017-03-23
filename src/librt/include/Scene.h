@@ -70,8 +70,8 @@ public:
     RenderMode                  GetRenderMode                               (void);
     void                        SetRenderMode                               (RenderMode mode);                                  
 
-    void                        Translate                                   (STVector3 prevMousePos, STVector3 curMousePos);
-    void                        Rotate                                      (STVector3 prevMousePos, STVector3 curMousePos);
+    void                        Translate                                   (float deltaX, float deltaY);
+    void                        Rotate                                      (float deltaX, float deltaY);
     void                        Spin                                        (float QMat1[4], float QMat2[4], float QMat3[4]);
 
     void                        PropogateTransforms                         (SceneNode *pNode);

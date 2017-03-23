@@ -288,7 +288,7 @@ void ProcessRotation(int mouseX, int mouseY)
     // Use this information to call  pScene->Rotate();
     // 
     //------------------------------------------------------------------------------
-    pScene->Rotate(raystart, raysend);
+    //pScene->Rotate(raystart, raysend);
     //---------------------------------------------------------------------------------
 }
 
@@ -341,7 +341,7 @@ void ProcessTranslation(int mouseX, int mouseY)
     // TO DO: Proj3_scenemanip
     // Complete the function Scene::Translate which is called here
     //------------------------------------------------------------------------------
-    pScene->Translate(raystart, raysend);
+    //pScene->Translate(raystart, raysend);
     //---------------------------------------------------------------------------------
 
 
@@ -378,7 +378,11 @@ void initializeScene(void)
     // of the transform that initializes the transformation node below
     // When you propogate the transform to the children the cube should move in the scene
     STMatrix4 transforming = STMatrix4();
-    transforming.table[3][0] = 3;
+
+    //Translate 1 in x, scale 2 in y.
+    //transforming.table[3][0] = 1;
+    //transforming.table[1][1] = 2;
+
     TransformNode *pNode =  pScene->AddTransform(transforming, pScene->GetRoot());
     //pNode->SetWorldT(transforming);
 
@@ -392,7 +396,7 @@ void initializeScene(void)
     // update the bounding box
     pScene->GetBBox(&gMassCenter, &gBoundingBox);
 
-    pScene->PropogateTransforms(pScene->GetRoot()->GetChildren().at(2));
+    pScene->PropogateTransforms(pScene->GetRoot());
 
     cout << "Adding nodes done" << endl;
     //----------------------------------------------------------------------------
@@ -587,16 +591,16 @@ void SpecialKeyCallback(int key, int x, int y)
 {
     switch(key) {
         case GLUT_KEY_LEFT:
-            pScene->GetCamera()->Strafe(10,0);
+            pScene->GetCamera()->Strafe(1,0);
             break;
         case GLUT_KEY_RIGHT:
-            pScene->GetCamera()->Strafe(-10,0);
+            pScene->GetCamera()->Strafe(-1,0);
             break;
         case GLUT_KEY_DOWN:
-            pScene->GetCamera()->Strafe(0,-10);
+            pScene->GetCamera()->Strafe(0,-1);
             break;
         case GLUT_KEY_UP:
-            pScene->GetCamera()->Strafe(0,10);
+            pScene->GetCamera()->Strafe(0,1);
             break;
         default:
             break;
@@ -806,24 +810,6 @@ void Spin (void)
 void MouseMotionCallback(int x, int y)
 {
 
-
-    // translate
-    if (pScene->CurrentManipMotion() == TRANS_X ||
-        pScene->CurrentManipMotion() == TRANS_Y ||
-        pScene->CurrentManipMotion() == TRANS_Z){
-        ProcessTranslation(x, y);
-        return;
-    }
-    
-    // rotate
-    if (pScene->CurrentManipMotion() == ROTATE_X ||
-        pScene->CurrentManipMotion() == ROTATE_Y ||
-        pScene->CurrentManipMotion() == ROTATE_Z){
-        ProcessRotation(x, y);
-        return;
-    }
-
-
     // compute the change in x and y
     if (gPreviousMouseX >= 0 && gPreviousMouseY >= 0)
     {
@@ -855,7 +841,24 @@ void MouseMotionCallback(int x, int y)
         {
            pScene->GetCamera()->Zoom(deltaY);
         }
-        
+
+    // translate
+    if (pScene->CurrentManipMotion() == TRANS_X ||
+        pScene->CurrentManipMotion() == TRANS_Y ||
+        pScene->CurrentManipMotion() == TRANS_Z){
+        //ProcessTranslation(x, y);
+        pScene->Translate(deltaX, deltaY);
+        return;
+    }
+    
+    // rotate
+    if (pScene->CurrentManipMotion() == ROTATE_X ||
+        pScene->CurrentManipMotion() == ROTATE_Y ||
+        pScene->CurrentManipMotion() == ROTATE_Z){
+        //ProcessRotation(x, y);
+        pScene->Rotate(deltaX, deltaY);
+        return;
+    }
     } 
     else {
         gPreviousMouseX = x;
