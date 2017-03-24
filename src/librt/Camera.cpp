@@ -222,11 +222,11 @@ void Camera::Zoom(float delta_y)
 //-------------------------------------------------------------
 void Camera::Strafe(float delta_x, float delta_y)
 {
-    m_Position.x -= delta_x;
-    m_Position.y += delta_y;
+    m_Position -= delta_x * m_Right;
+    m_Position += delta_y * m_Up;
 
-    m_LookAt.x -= delta_x;
-    m_LookAt.y += delta_y;
+    m_LookAt -= delta_x * m_Right;
+    m_LookAt += delta_y * m_Up;
 }
 
 
