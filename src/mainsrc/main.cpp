@@ -384,7 +384,6 @@ void initializeScene(void)
     //transforming.table[1][1] = 2;
 
     TransformNode *pNode =  pScene->AddTransform(transforming, pScene->GetRoot());
-    //pNode->SetWorldT(transforming);
 
     // add the triangle meshes
     for(int i = 0; i < (int)gTriangleMeshes.size(); ++i) {

@@ -528,7 +528,7 @@ void Scene::Translate(float deltaX, float deltaY)
     // 8. Make sure the private members m_translatex, m_translatey and m_translates are updated with 
     //    the scaled change in x, y, and z
     //-----------------------------------------------------------------------------------------
-    
+
     STMatrix4 adjustment = STMatrix4();
     
     // deterine the axis of translation
@@ -537,14 +537,14 @@ void Scene::Translate(float deltaX, float deltaY)
     int mode[3] = { 0, 0, 0 };
     if (motion == TRANS_X){
         mode[0] = 1;
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][0] += 0.01*deltaX;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
             nodeTrans->Multiply(adjustment);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][0] += 0.01*deltaX;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -554,7 +554,7 @@ void Scene::Translate(float deltaX, float deltaY)
     }
     if (motion == TRANS_Y){
         mode[1] = 1;
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][1] += -0.01*deltaY;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -562,7 +562,7 @@ void Scene::Translate(float deltaX, float deltaY)
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetTransform(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][1] += -0.01*deltaY;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -572,14 +572,14 @@ void Scene::Translate(float deltaX, float deltaY)
     }
     if (motion == TRANS_Z){
         mode[2] = 1;
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][2] += 0.01*deltaY;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
             nodeTrans->Multiply(adjustment);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(1,0,0);
             adjustment.table[3][2] += 0.01*deltaY;
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -634,9 +634,6 @@ void Scene::Rotate(float deltaX, float deltaY)
     //    to increment the rotation about the axis in a reasonably smooth way.
     // 7. Make sure the private member m_rotation is updated with T, the change in rotation amount.
     //---------------------------------------------------------------------------------
-    // determine the axis of rotation
-
-    //std::cout << deltaX << "  " << deltaY << std::endl;
 
     ManipMotionType motion = CurrentManipMotion();
     STMatrix4 adjustment = STMatrix4();
@@ -644,14 +641,14 @@ void Scene::Rotate(float deltaX, float deltaY)
 
     // a roataion about xaxis
     if (motion == ROTATE_X){
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(1,0,0);
             adjustment.EncodeR(-1.f*deltaY, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
             nodeTrans->Multiply(adjustment);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(1,0,0);
             adjustment.EncodeR(-1.f*deltaY, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -661,14 +658,14 @@ void Scene::Rotate(float deltaX, float deltaY)
     }
     // a rotation about the Y
     if (motion == ROTATE_Y){
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(0,1,0);
             adjustment.EncodeR(-1.f*deltaX, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
             nodeTrans->Multiply(adjustment);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(0,1,0);
             adjustment.EncodeR(-1.f*deltaX, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
@@ -677,14 +674,14 @@ void Scene::Rotate(float deltaX, float deltaY)
         }
     }
     if (motion == ROTATE_Z){
-        if (CurrentManipMode() == LOCAL){
+        if (CurrentManipMode() == PARENT){
             STVector3 axis = STVector3(0,0,1);
             adjustment.EncodeR(1.f*deltaX, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
             nodeTrans->Multiply(adjustment);
             m_pTree->GetChildren().at(2)->GetChildren().at(0)->SetWorldT(*nodeTrans);
         }
-        else if (CurrentManipMode() == PARENT){
+        else if (CurrentManipMode() == LOCAL){
             STVector3 axis = STVector3(0,0,1);
             adjustment.EncodeR(1.f*deltaX, axis);
             STMatrix4 *nodeTrans = m_pTree->GetChildren().at(2)->GetChildren().at(0)->GetWorldT();
