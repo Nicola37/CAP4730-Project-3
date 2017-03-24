@@ -370,7 +370,7 @@ void initializeScene(void)
 
     // load a cube model
     std::vector<STTriangleMesh*> gTriangleMeshes;
-    meshOBJ                         = std::string("../../data/meshes/cubeandspheres.obj");
+    meshOBJ                         = std::string("../../data/meshes/cylsphere.obj");
     STTriangleMesh::LoadObj(gTriangleMeshes,meshOBJ);
 
     // add the group transform for these triangle meshes here
